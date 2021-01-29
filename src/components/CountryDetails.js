@@ -1,35 +1,48 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
-export default function CountryDetails() {
+export default function CountryDetails(props) {
+
+    function getCountryData(cca3){
+        return props.countries.find(country => country.cca3 === cca3)
+    }
+
+    const currentCountryCca3 = props.match.params.cca3; // we're using react-rounter-dom URL params
+    const currentCountryData = getCountryData(currentCountryCca3);
+    const { name: {common: countryName}, capital, area, borders } = currentCountryData;
+
+    const bordersList = borders.map( borderCca3 => {
+        const borderCountry = getCountryData(borderCca3);
+        return (
+            <li key={borderCountry.cca3}>
+                <Link to={`/${borderCountry.cca3}`}>
+                    {borderCountry.name.common}
+                </Link>
+            </li>)                                        
+    })
+
     return (
-        <div class="col-7">
-            <h1>France</h1>
-            <table class="table">
+        <div className="col-7">
+            <h1>{countryName}</h1>
+            <table className="table">
                 <thead></thead>
                 <tbody>
                     <tr>
                         <td style={{width: "30%"}}>Capital</td>
-                        <td>Paris</td>
+                        <td>{capital}</td>
                     </tr>
                     <tr>
                         <td>Area</td>
-                        <td>551695 km
-                <sup>2</sup>
+                        <td>
+                            {area} km<sup>2</sup>
                         </td>
                     </tr>
                     <tr>
                         <td>Borders</td>
                         <td>
-                            <ul>
-                                <li><a href="/AND">Andorra</a></li>
-                                <li><a href="/BEL">Belgium</a></li>
-                                <li><a href="/DEU">Germany</a></li>
-                                <li><a href="/ITA">Italy</a></li>
-                                <li><a href="/LUX">Luxembourg</a></li>
-                                <li><a href="/MCO">Monaco</a></li>
-                                <li><a href="/ESP">Spain</a></li>
-                                <li><a href="/CHE">Switzerland</a></li>
-                            </ul>
+                            {
+                                borders.length ? <ul>{bordersList}</ul> : "This country has no borders" 
+                            }
                         </td>
                     </tr>
                 </tbody>
